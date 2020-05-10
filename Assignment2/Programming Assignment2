@@ -1,0 +1,43 @@
+from pyspark import SparkContext
+import pandas as pd
+
+sc = SparkContext()
+#sc.textFile("1000PI.txt")
+
+datafile = open("1000Sqrt_2.txt")
+
+line = datafile.read().replace("\n", "").replace(" ","").replace(".","")
+datafile.close()
+
+print(line)
+
+datafile
+#raw_data = sc.textFile(datafile)
+
+n = 2
+aa = [line[i:i+n] for i in range(0, len(line), n)]
+
+from operator import add
+frequency_plot = sc.parallelize(aa)\
+  .map(lambda word: (word, 1))\
+  .reduceByKey(add)\
+  .collect()
+ 
+res_min = sorted(frequency_plot, key = lambda i: i[1], reverse = False)[0]
+MIN=[]
+for i in frequency_plot:
+    if i[1]==res_min[1]:
+        MIN.append(i)
+result_min = str(MIN)
+print ("The number with minimum frequency is : " + result_min)
+
+
+res_max = sorted(frequency_plot, key = lambda i: i[1], reverse = True)[0]
+MAX=[]
+for i in frequency_plot:
+    if i[1]==res_max[1]:
+        MAX.append(i)
+
+
+result_max = str(MAX)
+print ("The number with maximum frequency is : " + result_max)
